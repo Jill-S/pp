@@ -3,6 +3,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # authentication
+    path('signin/', views.signIn),
+    path('signout/', views.signOut),
+
+    path('whoami/', views.whoAmI),
+
     # user
     path('studentList/', views.studentList),
     path('studentDetail/<int:pk>/', views.studentDetail),

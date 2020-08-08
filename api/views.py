@@ -1,5 +1,8 @@
+from rest_framework.decorators import permission_classes
+from rest_framework import permissions
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -11,6 +14,38 @@ from .serializers import (ApprovalSerializer, AssignmentSerializer,
                           CoordinatorSerializer, FileSerializer,
                           GradeSerializer, GuideSerializer, ProjectSerializer,
                           StudentSerializer, TeamSerializer)
+import json
+
+
+@api_view()
+def whoAmI(request):
+    return Response({
+        "type": request.user.groups.all()[0].name.lower()
+    }, status=status.HTTP_200_OK)
+
+
+@api_view()
+def signOut(request):
+    logout(request)
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def signIn(request):
+    if request.method == 'POST':
+        email = request.data.get("email")
+        password = request.data.get("password")
+        user = authenticate(request, email=email, password=password)
+        # send back user information
+        print(email, password, user)
+        if user is not None:
+            login(request, user)
+            return HttpResponse()
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])

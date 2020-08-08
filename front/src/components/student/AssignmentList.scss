@@ -1,0 +1,10 @@
+#AssignmentList {
+  .nav-pills .nav-link:not(.active) {
+    background: transparent;
+    color: rgb(183, 32, 46);
+  }
+  .nav-pills .nav-link {
+    background-color: rgb(183, 32, 46);
+    color: white;
+  }
+}
