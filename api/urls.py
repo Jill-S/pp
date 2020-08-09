@@ -3,11 +3,17 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # authentication
-    path('signin/', views.signIn),
-    path('signout/', views.signOut),
+    # frontend urls
 
-    path('whoami/', views.whoAmI),
+    path('rStudent/', views.rStudent),
+
+
+    # authentication
+    path('signIn/', views.signIn),
+    path('signUp/', views.signUp),
+    path('signOut/', views.signOut),
+
+    path('whoAmI/', views.whoAmI),
 
     # user
     path('studentList/', views.studentList),

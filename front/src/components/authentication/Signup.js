@@ -87,7 +87,7 @@ export default class Signup extends Component {
     event.preventDefault();
     if (this.isFormValid()) {
       axios
-        .post("studentList/", JSON.stringify(this.state))
+        .post("signUp/", this.state)
         .then((res) => {
           NotificationManager.success(
             "Please verify your email address to proceed",

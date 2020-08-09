@@ -6,7 +6,6 @@ from django.shortcuts import render, HttpResponse
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from .models import (Approval, Assignment, Assistant, Comment, Coordinator,
                      File, Grade, Guide, Project, Student, Team)
 from .serializers import (ApprovalSerializer, AssignmentSerializer,
@@ -18,27 +17,64 @@ import json
 
 
 @api_view()
+@permission_classes([permissions.AllowAny])
+def rStudent(request):
+    students = Student.objects.all().order_by('roll_number')
+    data = []
+    for student in students:
+        student_data = {
+            "id": student.id,
+            "branch": student.branch,
+            "roll_number": student.roll_number,
+            "email": student.email,
+            "name": " ".join([student.first_name.strip(), str(student.last_name or "").strip()]),
+        }
+        try:
+            project = Project.objects.get(student=student)
+            student_data.setdefault("project_id", project.id)
+            student_data.setdefault("project_name", project.title)
+        except:
+            student_data.setdefault("project_id", "N/A")
+            student_data.setdefault("project_name", "N/A")
+        try:
+            team = Team.objects.get(id=student.team.id)
+            student_data.setdefault("group_id", team.id)
+        except:
+            student_data.setdefault("group_id", "N/A")
+        try:
+            guide = Guide.objects.get(id=team.guide_id)
+            student_data.setdefault("guide_id", guide.id)
+            student_data.setdefault("guide_name", " ".join(
+                [guide.first_name.strip(), str(guide.last_name or "").strip()]))
+        except:
+            student_data.setdefault("guide_id", "N/A")
+            student_data.setdefault("guide_name", "N/A")
+        data.append(student_data)
+    return Response(data={"data": data}, status=status.HTTP_200_OK)
+
+
+@ api_view()
 def whoAmI(request):
-    return Response({
-        "type": request.user.groups.all()[0].name.lower()
-    }, status=status.HTTP_200_OK)
+    try:
+        userType = request.user.groups.all()[0].name.lower()
+        return Response({"type": f"{userType}"}, status=status.HTTP_200_OK)
+    except:
+        return Response({"type": "unknown"}, status=status.HTTP_200_OK)
 
 
-@api_view()
+@ api_view()
 def signOut(request):
     logout(request)
     return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@ api_view(['POST'])
+@ permission_classes([permissions.AllowAny])
 def signIn(request):
     if request.method == 'POST':
         email = request.data.get("email")
         password = request.data.get("password")
         user = authenticate(request, email=email, password=password)
-        # send back user information
-        print(email, password, user)
         if user is not None:
             login(request, user)
             return HttpResponse()
@@ -48,11 +84,50 @@ def signIn(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['POST'])
+@ permission_classes([permissions.AllowAny])
+def signUp(request):
+    if request.method == 'POST':
+        email = request.data.get("email")
+        password = request.data.get("password")
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        roll_number = request.data.get("roll_number")
+        branch = request.data.get("branch")
+        if branch == "Information Technology":
+            branch = "IT"
+        elif branch == "Computer Science":
+            branch = "CS"
+        elif branch == "Mechanical":
+            branch = "MECH"
+        elif branch == "Electronics":
+            branch = "ETRX"
+        elif branch == "Electronics and Telecommunication":
+            branch = "EXTC"
+        data = {
+            "first_name": f"{first_name}",
+            "last_name": f"{last_name}",
+            "email": f"{email}",
+            "password": f"{password}",
+            "branch": f"{branch}",
+            "roll_number": roll_number,
+            "profile_photo": None,
+            "is_staff": False,
+            "is_active": True
+        }
+        serializer = StudentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@ api_view(['GET', 'POST'])
+@ permission_classes([permissions.AllowAny])
 def studentList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_student'):
-            data = Student.objects.all()
+            data = Student.objects.all().order_by('roll_number')
             serializer = StudentSerializer(
                 data, context={'request': request}, many=True)
             return Response(serializer.data)
@@ -60,6 +135,8 @@ def studentList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
     elif request.method == 'POST':
         if request.user.has_perm('api.add_student'):
+            print(request.data)
+            print(type(request.data))
             serializer = StudentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -69,7 +146,7 @@ def studentList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def studentDetail(request, pk):
     try:
         data = Student.objects.get(pk=pk)
@@ -100,7 +177,7 @@ def studentDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def guideList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_guide'):
@@ -121,7 +198,7 @@ def guideList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def guideDetail(request, pk):
     try:
         data = Guide.objects.get(pk=pk)
@@ -152,7 +229,7 @@ def guideDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def coordinatorList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_coordinator'):
@@ -173,7 +250,7 @@ def coordinatorList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def coordinatorDetail(request, pk):
     try:
         data = Coordinator.objects.get(pk=pk)
@@ -204,7 +281,7 @@ def coordinatorDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def assistantList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_assistant'):
@@ -225,7 +302,7 @@ def assistantList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def assistantDetail(request, pk):
     try:
         data = Assistant.objects.get(pk=pk)
@@ -256,7 +333,7 @@ def assistantDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def assignmentList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_assignment'):
@@ -277,7 +354,7 @@ def assignmentList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def assignmentDetail(request, pk):
     try:
         data = Assignment.objects.get(pk=pk)
@@ -308,7 +385,7 @@ def assignmentDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def teamList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_team'):
@@ -329,7 +406,7 @@ def teamList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def teamDetail(request, pk):
     try:
         data = Team.objects.get(pk=pk)
@@ -359,7 +436,7 @@ def teamDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def commentList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_comment'):
@@ -380,7 +457,7 @@ def commentList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def commentDetail(request, pk):
     try:
         data = Comment.objects.get(pk=pk)
@@ -411,7 +488,7 @@ def commentDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def fileList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_file'):
@@ -432,7 +509,7 @@ def fileList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def fileDetail(request, pk):
     try:
         data = File.objects.get(pk=pk)
@@ -462,7 +539,7 @@ def fileDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def projectList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_project'):
@@ -483,7 +560,7 @@ def projectList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def projectDetail(request, pk):
     try:
         data = Project.objects.get(pk=pk)
@@ -514,7 +591,7 @@ def projectDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def gradeList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_grade'):
@@ -535,7 +612,7 @@ def gradeList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def gradeDetail(request, pk):
     try:
         data = Grade.objects.get(pk=pk)
@@ -566,7 +643,7 @@ def gradeDetail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def approvalList(request):
     if request.method == 'GET':
         if request.user.has_perm('api.view_approval'):
@@ -587,7 +664,7 @@ def approvalList(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def approvalDetail(request, pk):
     try:
         data = Approval.objects.get(pk=pk)

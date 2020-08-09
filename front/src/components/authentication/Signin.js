@@ -22,10 +22,7 @@ export default class Signin extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("signin/", {
-        email: this.state.email,
-        password: this.state.password,
-      })
+      .post("signIn/", this.state)
       .then(() => {
         window.location.reload();
       })

@@ -79,6 +79,8 @@ class Student(User):
         _("branch"), max_length=4, choices=branches, default="IT")
     team = models.ForeignKey("api.Team", verbose_name=_(
         "team"), on_delete=models.SET_NULL, blank=True, null=True)
+    project = models.OneToOneField("api.Project", verbose_name=_(
+        "project"), on_delete=models.SET_NULL, blank=True, null=True)
 
 
 thrust_areas = (("NS", "Network and Security"),
@@ -90,8 +92,8 @@ thrust_areas = (("NS", "Network and Security"),
 class Guide(User):
     initials = models.CharField(_("initials"), max_length=50, unique=True)
     area_of_interest = JSONField()
-    thrust_area = models.CharField(
-        _("thrust area"), max_length=50, choices=thrust_areas, default="NS")
+    # check before saving
+    thrust_area = JSONField()
 
 
 class Assistant(User):
@@ -151,8 +153,6 @@ class Project(models.Model):
     description = models.TextField(_("description"))
     approval = models.OneToOneField(
         "api.Approval", verbose_name=_("approval"), on_delete=models.CASCADE)
-    students = models.ForeignKey("api.Student", verbose_name=_(
-        "students"), on_delete=models.DO_NOTHING)
 
 
 class Comment(models.Model):
@@ -184,6 +184,8 @@ class Team(models.Model):
         "leader"), null=True, on_delete=models.SET_NULL,  related_name='+')
     approval = models.ForeignKey("api.Approval", verbose_name=_(
         "approval"), on_delete=models.DO_NOTHING, blank=True, null=True)
+    guide = models.OneToOneField("api.Guide", verbose_name=_(
+        "guide"), on_delete=models.SET_NULL, blank=True, null=True)
 
 
 class Grade(models.Model):
