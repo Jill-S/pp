@@ -79,7 +79,7 @@ class Student(User):
         _("branch"), max_length=4, choices=branches, default="IT")
     team = models.ForeignKey("api.Team", verbose_name=_(
         "team"), on_delete=models.SET_NULL, blank=True, null=True)
-    project = models.OneToOneField("api.Project", verbose_name=_(
+    project = models.ForeignKey("api.Project", verbose_name=_(
         "project"), on_delete=models.SET_NULL, blank=True, null=True)
 
 
@@ -93,6 +93,8 @@ class Guide(User):
     initials = models.CharField(_("initials"), max_length=50, unique=True)
     area_of_interest = JSONField()
     # check before saving
+    branch = models.CharField(
+        _("branch"), max_length=4, choices=branches, default="IT")
     thrust_area = JSONField()
 
 
@@ -105,6 +107,7 @@ class Coordinator(User):
 
 
 class File(models.Model):
+    submitted_by = models.EmailField(_("submitted by"), max_length=254)
     assignment = models.ForeignKey("api.Assignment", verbose_name=_(
         "assignment"), on_delete=models.CASCADE)
     file = models.FileField(_("file"), upload_to="user_files/")
@@ -141,6 +144,10 @@ category = (("IN", "Internal"),
             ("EX", "External"),
             ("ID", "Inter-disciplinary"),)
 
+status = (("P", "Pending"),
+          ("A", "Accepted"),
+          ("R", "Rejected"),)
+
 
 class Project(models.Model):
     title = models.CharField(_("title"), max_length=256)
@@ -151,8 +158,12 @@ class Project(models.Model):
     explanatory_field = models.TextField(
         _("explanatory field"), blank=True, null=True)
     description = models.TextField(_("description"))
+    status = models.CharField(
+        _("status"), max_length=50, choices=status, default="P")
     approval = models.OneToOneField(
         "api.Approval", verbose_name=_("approval"), on_delete=models.CASCADE)
+    team = models.OneToOneField(
+        "api.Team", verbose_name=_("Team"), on_delete=models.CASCADE)
 
 
 class Comment(models.Model):

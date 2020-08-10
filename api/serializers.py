@@ -45,7 +45,8 @@ class CoordinatorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Coordinator
-        fields = ['id', 'email', 'first_name', 'last_name',  "profile_photo"]
+        # fields = ['id', 'email', 'first_name', 'last_name',  "profile_photo"]
+        fields = "__all__"
 
 
 class AssistantSerializer(serializers.ModelSerializer):

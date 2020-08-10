@@ -23,11 +23,11 @@ def rStudent(request):
     data = []
     for student in students:
         student_data = {
-            "id": student.id,
-            "branch": student.branch,
-            "roll_number": student.roll_number,
-            "email": student.email,
-            "name": " ".join([student.first_name.strip(), str(student.last_name or "").strip()]),
+            "student_id": student.id,
+            "student_branch": student.branch,
+            "student_roll_number": student.roll_number,
+            "student_email": student.email,
+            "student_name": " ".join([student.first_name.strip(), str(student.last_name or "").strip()]),
         }
         try:
             project = Project.objects.get(student=student)
@@ -50,6 +50,136 @@ def rStudent(request):
             student_data.setdefault("guide_id", "N/A")
             student_data.setdefault("guide_name", "N/A")
         data.append(student_data)
+    return Response(data={"data": data}, status=status.HTTP_200_OK)
+
+
+@api_view()
+@permission_classes([permissions.AllowAny])
+def rGroup(request):
+    teams = Team.objects.all().order_by('id')
+    data = []
+    for team in teams:
+        team_data = {
+            "team_id": team.id,
+        }
+        try:
+            project = Project.objects.get(team=team.id)
+            project_data = {}
+            project_data.setdefault("project_id", project.id)
+            project_data.setdefault("project_name", project.title)
+            project_data.setdefault("project_type", project.category)
+            team_data.setdefault("project_data", project_data)
+        except:
+            project_data = {}
+            project_data.setdefault("project_id", "N/A")
+            project_data.setdefault("project_name", "N/A")
+            project_data.setdefault("project_type", "N/A")
+            team_data.setdefault("project_data", project_data)
+        try:
+            students = Student.objects.filter(team_id=team.id)
+            leader = Student.objects.get(id=team.leader_id)
+            leader_name = " ".join(
+                [leader.first_name.strip(), str(leader.last_name or "").strip()])
+            students_data_array = []
+            for student in students:
+                student_data = {}
+                student_data.setdefault("student_id", student.id)
+                student_data.setdefault("student_name", " ".join(
+                    [student.first_name.strip(), str(student.last_name or "").strip()]))
+                student_data.setdefault(
+                    "student_photo", student.profile_photo or "null")
+                students_data_array.append(student_data)
+            team_data.setdefault("leader_name", leader_name)
+            team_data.setdefault("student_data", students_data_array)
+        except:
+            team_data.setdefault("leader_name", "N/A")
+            team_data.setdefault("student_data", "N/A")
+        try:
+            guide = Guide.objects.get(id=team.guide_id)
+            guide_data = {}
+            guide_data.setdefault("guide_id", guide.id)
+            guide_data.setdefault("guide_photo", guide.profile_photo or "null")
+            guide_data.setdefault("guide_name", " ".join(
+                [guide.first_name.strip(), str(guide.last_name or "").strip()]))
+            team_data.setdefault("guide_data", guide_data)
+        except:
+            guide_data = {}
+            guide_data.setdefault("guide_id", "N/A")
+            guide_data.setdefault("guide_name", "N/A")
+            guide_data.setdefault("guide_photo", "N/A")
+            team_data.setdefault("guide_data", guide_data)
+        data.append(team_data)
+    return Response(data={"data": data}, status=status.HTTP_200_OK)
+
+
+@api_view()
+@permission_classes([permissions.AllowAny])
+def rGuide(request):
+    guides = Guide.objects.all()
+    data = []
+    for guide in guides:
+        guide_data = {
+            "guide_id": guide.id,
+            "guide_name": " ".join(
+                [guide.first_name.strip(), str(guide.last_name or "").strip()]),
+            "guide_branch": guide.branch
+        }
+        try:
+            teams = Team.objects.filter(guide=guide)
+            team_data = []
+            for team in teams:
+                temp_team_data = {
+                    "team_id": team.id
+                }
+                try:
+                    project = Project.objects.get(team=team)
+                    temp_team_data.setdefault("project_id", project.id)
+                    temp_team_data.setdefault("project_title", project.title)
+                except:
+                    temp_team_data.setdefault("project_id", "N/A")
+                    temp_team_data.setdefault("project_title", "N/A")
+                finally:
+                    team_data.append(temp_team_data)
+            guide_data.setdefault("team_data", team_data)
+        except:
+            guide_data.setdefault("team_data", "N/A")
+
+        data.append(guide_data)
+    return Response(data={"data": data}, status=status.HTTP_200_OK)
+
+
+@api_view()
+@permission_classes([permissions.AllowAny])
+def rProject(request):
+    teams = Team.objects.all().order_by("id")
+    data = []
+    for team in teams:
+        project_data = {
+            "team_id": team.id
+        }
+        try:
+            project = Project.objects.get(team=team)
+            project_data.setdefault("project_id", project.id)
+            project_data.setdefault("project_status", project.status)
+            project_data.setdefault("project_title", project.title)
+            project_data.setdefault("project_category", project.category)
+            project_data.setdefault("project_domain", project.domain)
+            project_data.setdefault("project_description", project.description)
+            project_data.setdefault(
+                "project_explanatory_field", project.explanatory_field or "")
+        except:
+            continue
+
+        try:
+            guide = Guide.objects.get(team=team)
+            project_data.setdefault("guide_name", " ".join(
+                [guide.first_name.strip(), str(guide.last_name or "").strip()]))
+            project_data.setdefault("guide_id", guide.id)
+        except:
+            project_data.setdefault("guide_name", "N/A")
+            project_data.setdefault("guide_id", "N/A")
+
+        data.append(project_data)
     return Response(data={"data": data}, status=status.HTTP_200_OK)
 
 
@@ -120,6 +250,44 @@ def signUp(request):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@ api_view(['POST'])
+def guideSignUp(request):
+    if request.method == 'POST':
+        if request.user.has_perm('api.add_guide'):
+            email = request.data.get("email")
+            password = request.data.get("password")
+            first_name = request.data.get("first_name")
+            last_name = request.data.get("last_name")
+            branch = request.data.get("branch")
+            if branch == "Information Technology":
+                branch = "IT"
+            elif branch == "Computer Science":
+                branch = "CS"
+            elif branch == "Mechanical":
+                branch = "MECH"
+            elif branch == "Electronics":
+                branch = "ETRX"
+            elif branch == "Electronics and Telecommunication":
+                branch = "EXTC"
+            data = {
+                "first_name": f"{first_name}",
+                "last_name": f"{last_name}",
+                "email": f"{email}",
+                "password": f"{password}",
+                "branch": f"{branch}",
+                "profile_photo": None,
+                "is_staff": False,
+                "is_active": True
+            }
+            serializer = GuideSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 @ api_view(['GET', 'POST'])

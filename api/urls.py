@@ -6,11 +6,15 @@ urlpatterns = [
     # frontend urls
 
     path('rStudent/', views.rStudent),
+    path('rGroup/', views.rGroup),
+    path('rGuide/', views.rGuide),
+    path('rProject/', views.rProject),
 
 
     # authentication
     path('signIn/', views.signIn),
     path('signUp/', views.signUp),
+    path('guideSignUp/', views.guideSignUp),
     path('signOut/', views.signOut),
 
     path('whoAmI/', views.whoAmI),
