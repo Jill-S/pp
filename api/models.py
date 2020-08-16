@@ -158,10 +158,6 @@ class Project(models.Model):
     explanatory_field = models.TextField(
         _("explanatory field"), blank=True, null=True)
     description = models.TextField(_("description"))
-    status = models.CharField(
-        _("status"), max_length=50, choices=status, default="P")
-    approval = models.OneToOneField(
-        "api.Approval", verbose_name=_("approval"), on_delete=models.CASCADE)
     team = models.OneToOneField(
         "api.Team", verbose_name=_("Team"), on_delete=models.CASCADE)
 
@@ -175,26 +171,50 @@ class Comment(models.Model):
 approval_status = (("P", "Pending"),
                    ("A", "Accepted"),
                    ("R", "Rejected"),)
-approval_category = (("P", "Project"),
-                     ("CL", "Change leader"),
-                     ("RS", "Remove student"),)
 
 
-class Approval(models.Model):
+class ProjectRequest(models.Model):
     status = models.CharField(
-        _("status"), max_length=4, choices=approval_status, default="P")
-    category = models.CharField(
-        _("category"), max_length=50, choices=approval_category, default="P")
+        _("status"), max_length=40, choices=approval_status, default="P")
     created = models.DateTimeField(_("created"), auto_now=True)
+    description = models.TextField(_("description"))
     last_modified = models.DateTimeField(
         _("last modified"), auto_now_add=True, blank=True, null=True)
+    project = models.ForeignKey(
+        "api.Project", verbose_name=_("project"), on_delete=models.CASCADE)
+
+
+group_actions = [
+    ("Change Leader", "Change Leader"),
+    ("Removal", "Removal of a student from group"),
+    ("Add", "Addition of a student to a group")
+]
+
+
+class GroupRequest(models.Model):
+    action = models.CharField(
+        _("action"), choices=group_actions, max_length=36)
+    description = models.TextField(_("description"))
+    generated = models.DateTimeField(_("generated on"), auto_now=True)
+    processed = models.DateTimeField(
+        _("processed on"), auto_now_add=True, blank=True, null=True)
+    team = models.ForeignKey(
+        "api.Team", verbose_name=_("team"), on_delete=models.CASCADE)
+    old_leader = models.OneToOneField("api.Student", verbose_name=_(
+        "old leader"), on_delete=models.SET_NULL, blank=True, null=True)
+    new_leader = models.OneToOneField("api.Student", verbose_name=_(
+        "new leader"), on_delete=models.SET_NULL, blank=True, null=True, related_name="+")
+    remove_student = models.OneToOneField("api.Student", verbose_name=_(
+        "remove student"), on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    add_student = models.OneToOneField("api.Student", verbose_name=_(
+        "add student"), on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    status = models.CharField(
+        _("status"), max_length=10, choices=approval_status, default="P")
 
 
 class Team(models.Model):
     leader = models.OneToOneField("api.Student", verbose_name=_(
         "leader"), null=True, on_delete=models.SET_NULL,  related_name='+')
-    approval = models.ForeignKey("api.Approval", verbose_name=_(
-        "approval"), on_delete=models.DO_NOTHING, blank=True, null=True)
     guide = models.OneToOneField("api.Guide", verbose_name=_(
         "guide"), on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -204,9 +224,13 @@ class Grade(models.Model):
         "students"), on_delete=models.DO_NOTHING)
     assignment = models.OneToOneField(
         "api.Assignment", verbose_name=_("assignment"), on_delete=models.CASCADE)
+    # turned in
+    turned_in = models.BooleanField(_("turned in"), default=False)
     marks_obtained = models.IntegerField(
-        _("marks obtained"), blank=True, default=0)
+        _("marks obtained"), blank=True, null=True)
     guide = models.OneToOneField("api.Guide", verbose_name=_(
-        "guide"), on_delete=models.DO_NOTHING)
+        "guide"), on_delete=models.SET_NULL, blank=True, null=True)
     graded_on = models.DateTimeField(
         _("graded on"), auto_now_add=True)
+
+# grade.exists ==> submitted ; marks_obtained != 0 ==> graded ;

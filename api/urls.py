@@ -1,25 +1,31 @@
+
 from django.urls import path
 
 from . import views
 
 urlpatterns = [
-    # frontend urls
-
+    # admin portal routes
     path('rStudent/', views.rStudent),
+    path('rGroupRequest/', views.rGroupRequest),
+    path('rProjectRequest/', views.rProjectRequest),
+    path('rGroupRequestManage/<int:id>/<slug:status>/', views.rGroupRequestManage),
+    path('rProjectRequestManage/<int:id>/', views.rProjectRequestManage),
     path('rGroup/', views.rGroup),
+    path('rCreateAssignment/', views.rCreateAssignment),
+    path('rSubmissionStatistics/', views.rSubmissionStatistics),
+    path('rGradingStatistics/', views.rGradingStatistics),
     path('rGuide/', views.rGuide),
     path('rProject/', views.rProject),
-
-
-    # authentication
+    path('rAssignment/<int:pk>/', views.rAssignment),
+    path('rGroupSubmissionDetails/<int:assignmentId>/<int:teamId>/',
+         views.rGroupSubmissionDetails),
+    path('whoAmI/', views.whoAmI),
+    # authentication routes
     path('signIn/', views.signIn),
     path('signUp/', views.signUp),
     path('guideSignUp/', views.guideSignUp),
     path('signOut/', views.signOut),
-
-    path('whoAmI/', views.whoAmI),
-
-    # user
+    # model based routes
     path('studentList/', views.studentList),
     path('studentDetail/<int:pk>/', views.studentDetail),
     path('guideList/', views.guideList),
@@ -28,8 +34,6 @@ urlpatterns = [
     path('coordinatorDetail/<int:pk>/', views.coordinatorDetail),
     path('assistantList/', views.assistantList),
     path('assistantDetail/<int:pk>/', views.assistantDetail),
-
-    # other
     path('assignmentList/', views.assignmentList),
     path('assignmentDetail/<int:pk>/', views.assignmentDetail),
     path('approvalList/', views.approvalList),
@@ -45,3 +49,6 @@ urlpatterns = [
     path('fileList/', views.fileList),
     path('fileDetail/<int:pk>/', views.fileDetail),
 ]
+
+# MEDIA_URL = /media/
+""" cannot access media from admin """

@@ -1,0 +1,39 @@
+// student
+{
+    "first_name": "nishavak",
+    "password": "adminadmin",
+    "roll_number": "1814040",
+    "branch": "IT",
+    "email": "nishavak.student@somaiya.edu"
+}
+{
+    "first_name": "atharva",
+    "password": "adminadmin",
+    "roll_number": "1814033",
+    "branch": "IT",
+    "email": "atharva.student@somaiya.edu"
+}
+{
+    "first_name": "jill",
+    "password": "adminadmin",
+    "roll_number": "1814055",
+    "branch": "IT",
+    "email": "jill.student@somaiya.edu"
+}
+
+// coordinator
+{
+    "email": "nishavak.coor@somaiya.edu",
+    "first_name": "nishavak",
+    "password": "adminadmin"
+}
+
+// guide
+{
+    "email": "nishavak.guide@somaiya.edu",
+    "first_name": "nishavak",
+    "password": "adminadmin",
+    "initials": "NN",
+    "area_of_interest": "Networking",
+    "thrust_area": "NS"
+}

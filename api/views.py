@@ -3,16 +3,17 @@ from rest_framework import permissions
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from django.shortcuts import render, HttpResponse
+from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import (Approval, Assignment, Assistant, Comment, Coordinator,
-                     File, Grade, Guide, Project, Student, Team)
-from .serializers import (ApprovalSerializer, AssignmentSerializer,
+from .models import (Assignment, Assistant, Comment, Coordinator,
+                     File, Grade, Guide, Project, Student, Team, GroupRequest, ProjectRequest)
+from .serializers import (AssignmentSerializer,
                           AssistantSerializer, CommentSerializer,
                           CoordinatorSerializer, FileSerializer,
                           GradeSerializer, GuideSerializer, ProjectSerializer,
-                          StudentSerializer, TeamSerializer)
+                          StudentSerializer, TeamSerializer, GroupRequestSerializer, ProjectRequestSerializer)
 import json
 
 
@@ -143,7 +144,6 @@ def rGuide(request):
             guide_data.setdefault("team_data", team_data)
         except:
             guide_data.setdefault("team_data", "N/A")
-
         data.append(guide_data)
     return Response(data={"data": data}, status=status.HTTP_200_OK)
 
@@ -169,7 +169,6 @@ def rProject(request):
                 "project_explanatory_field", project.explanatory_field or "")
         except:
             continue
-
         try:
             guide = Guide.objects.get(team=team)
             project_data.setdefault("guide_name", " ".join(
@@ -178,9 +177,291 @@ def rProject(request):
         except:
             project_data.setdefault("guide_name", "N/A")
             project_data.setdefault("guide_id", "N/A")
-
         data.append(project_data)
     return Response(data={"data": data}, status=status.HTTP_200_OK)
+# if submitted link should be disabled
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([permissions.AllowAny])
+def rAssignment(request, pk, *args, **kwargs):
+    assignment = Assignment.objects.get(pk=pk)
+    files = File.objects.filter(assignment=assignment)
+    # assignment details
+    res = {}
+    assignment_details = {}
+    _files = []
+    for file in files:
+        _files.append({
+            "file_id": file.id,
+            "file_name": file.file.name,
+            "file_url": file.file.url,
+        })
+    _assignment = {
+        "assignment_id": assignment.id,
+        "assignment_title": assignment.title,
+        "assignment_weightage": assignment.weightage,
+        "assignment_description": assignment.description,
+        "assignment_due_on": assignment.due,
+        "assignment_posted_on": assignment.posted
+    }
+    assignment_details.setdefault("assignment", _assignment)
+    assignment_details.setdefault("files", _files)
+    res.setdefault("assignment_details", assignment_details)
+    # submission status
+    submission_status = []
+
+    for team in Team.objects.all():
+        _submission_status = {
+            "team_id": team.id
+        }
+        try:
+            # if submitted link should be disabled
+            grade = Grade.objects.get(students=team.leader)
+            if grade.turned_in:
+                _submission_status.setdefault("status", "Submitted")
+                print(grade.marks_obtained)
+                # to be checked later
+                if grade.marks_obtained != None:
+                    _submission_status["status"] = "Graded"
+            else:
+                _submission_status.setdefault("status", "Unsubmitted")
+        except:
+            _submission_status.setdefault("status", "N/A")
+        submission_status.append(_submission_status)
+    res.setdefault("submissionStatus", submission_status)
+    return Response(data={"data": res})
+# if submitted link should be disabled
+
+
+@api_view()
+@permission_classes([permissions.AllowAny])
+def rGroupSubmissionDetails(request, assignmentId, teamId):
+    team = Team.objects.get(id=teamId)
+    res = {}
+    weightage = Assignment.objects.get(id=assignmentId).weightage
+    students = Student.objects.filter(team=team)
+    student_data = []
+    for student in students:
+        _student_data = {
+            "student_id": student.id,
+            "student_roll": student.roll_number
+        }
+        try:
+            grade = Grade.objects.get(students=student)
+            _student_data.setdefault(
+                "student_marks", grade.marks_obtained)
+        except:
+            _student_data.setdefault(
+                "student_marks", "N/A")
+        student_data.append(_student_data)
+    leader = Student.objects.get(id=team.leader.id)
+    try:
+        files = File.objects.filter(assignment_id=assignmentId).filter(
+            submitted_by=leader.email)
+        file_list = []
+        for file in files:
+            _file = {
+                "id": file.id,
+                "file_name": file.file.name,
+                "file_url": file.file.url
+            }
+            file_list.append(_file)
+    except:
+        pass
+    res.setdefault("students_data", student_data)
+    res.setdefault("file_list", file_list)
+    res.setdefault("weightage", weightage)
+    return Response(data=res)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def rCreateAssignment(request):
+    title = request.data.get('title')
+    description = request.data.get('description')
+    weightage = int(request.data.get('weightage'))
+    posted = timezone.datetime.fromtimestamp(int(request.data.get('posted')))
+    due = timezone.datetime.fromtimestamp(int(request.data.get('due')))
+    coordinator = request.data.get("coordinator")
+
+    # for each student create grade
+
+    print(request.data)
+
+    data = {
+        "title": title,
+        "description": description,
+        "due": due,
+        "posted": posted,
+        "weightage": weightage,
+        "coordinator": coordinator
+    }
+# file handling remaining
+    serializer = AssignmentSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        assignment = Assignment.objects.get(title=title)
+        for student in Student.objects.all():
+            Grade.objects.create(
+                students=student, guide=None, assignment=assignment)
+        return Response(status=status.HTTP_201_CREATED)
+# post save signal to add grade objects for existing assignments after user creation.
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def rSubmissionStatistics(request):
+    teams = Team.objects.all()
+    res = []
+    for team in teams:
+        _team_data_item = {
+            "team_id": team.id
+        }
+        grade_list = []
+        leader = Student.objects.get(id=team.leader.id)
+        try:
+            grades = Grade.objects.filter(students_id=leader.id)
+            for grade in grades:
+                submission_status = "Not submitted"
+                _t_grade = {}
+                if grade.turned_in:
+                    submission_status = "Submitted"
+                    if grade.marks_obtained != None:
+                        submission_status = "Graded"
+
+                _t_grade.setdefault("submission_status", submission_status)
+                _t_grade.setdefault(
+                    "assignment_name", Assignment.objects.get(id=grade.assignment.id).title)
+                grade_list.append(_t_grade)
+        except:
+            pass
+        _team_data_item.setdefault("grades", grade_list)
+
+        res.append(_team_data_item)
+
+    return Response(data=res, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def rGradingStatistics(request):
+    students = Student.objects.all()
+    res = []
+    for student in students:
+        student_data = {
+            "roll_number": student.roll_number
+        }
+
+        grade_list = []
+
+        try:
+            grades = Grade.objects.filter(students=student)
+            print(grades)
+
+            for grade in grades:
+
+                _grade = {
+                    "assignment_name": Assignment.objects.get(id=grade.assignment.id).title
+                }
+                submission_status = "Not Submitted"
+                if grade.turned_in:
+                    submission_status = "Submitted"
+                    if grade.marks_obtained != None:
+                        submission_status = int(grade.marks_obtained)
+                _grade.setdefault("marks", submission_status)
+                print(_grade)
+                grade_list.append(_grade)
+        except:
+            pass
+
+        student_data.setdefault("grade_list", grade_list)
+
+        res.append(student_data)
+
+    return Response(data=res, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([permissions.AllowAny])
+def rGroupRequest(request, *args, **kwargs):
+    res = {}
+    # GET
+
+    group_requests = []
+    for group_request in GroupRequest.objects.all():
+        _t = {
+            "action": group_request.action,
+            "status": group_request.status,
+            "new_leader": group_request.new_leader,
+            "old_leader": group_request.old_leader,
+            "add_student": group_request.add_student,
+            "remove_student": group_request.remove_student,
+            "team": group_request.team.id,
+            "description": group_request.description,
+            "generated": group_request.generated.strftime("%m/%d/%Y, %H:%M:%S"),
+            "processed": group_request.processed.strftime("%m/%d/%Y, %H:%M:%S"),
+        }
+        group_requests.append(_t)
+
+    res.setdefault("group requests", group_requests)
+
+    return Response(data=res)
+
+
+@api_view(["GET", "PUT"])
+@permission_classes([permissions.AllowAny])
+def rGroupRequestManage(request, id, status, *args, **kwargs):
+    group_request = GroupRequest.objects.get(id=id)
+
+    action = group_request.action
+    if action == "Change Leader":
+        if status == "A":
+            team = Team.objects.get(id=group_request.team.id)
+            team.leader = group_request.new_leader
+            team.save()
+            group_request.status = "A"
+            group_request.save()
+        else:
+            group_request.status = "R"
+            group_request.save()
+    elif action == "Add":
+        if status == "A":
+            student = Student.objects.get(id=group_request.add_student)
+            student.team = group_request.team
+            student.save()
+            group_request.status = "A"
+            group_request.save()
+        else:
+            group_request.status = "R"
+            group_request.save()
+    else:
+        if status == "A":
+            student = Student.objects.get(id=group_request.add_student)
+            student.team = None
+            student.save()
+            group_request.status = "A"
+            group_request.save()
+        else:
+            group_request.status = "R"
+            group_request.save()
+    return Response()
+
+
+@api_view(["GET", "PUT"])
+@permission_classes([permissions.AllowAny])
+def rProjectRequestManage(request, id, status, *args, **kwargs):
+    project_request = ProjectRequest.objects.get(id=id)
+    if status == "A":
+        project_request.status = "A"
+        project_request.save()
+    if status == "R":
+        project = Project.objects.get(id=project_request.project.id)
+        project.delete()
+        project_request.delete()
+
+    return Response()
 
 
 @ api_view()

@@ -1,0 +1,13 @@
+#comment-section {
+  .form-control {
+    font-size: 0.9em;
+    border: none;
+    transition: all 150ms ease;
+
+    &:focus {
+      color: black;
+      //   border-bottom: 0.2em solid rgb(183, 32, 46);
+      border-bottom: 0.2em solid black;
+    }
+  }
+}

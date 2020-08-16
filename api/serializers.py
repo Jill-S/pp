@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from .models import (Approval, Assignment, Assistant, Comment, Coordinator,
+from .models import (GroupRequest, ProjectRequest, Assignment, Assistant, Comment, Coordinator,
                      File, Grade, Guide, Project, Student, Team)
 
 
@@ -116,9 +116,21 @@ class FileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ApprovalSerializer(serializers.ModelSerializer):
+# class ApprovalSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Approval
+#         fields = '__all__'
+
+
+class GroupRequestSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Approval
+        model = GroupRequest
+        fields = '__all__'
+
+
+class ProjectRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectRequest
         fields = '__all__'
 
 

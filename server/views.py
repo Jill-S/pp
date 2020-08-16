@@ -3,5 +3,5 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 @ensure_csrf_cookie
-def react(request, *args, **kwargs):
+def react(request):
     return render(request, "index.html")

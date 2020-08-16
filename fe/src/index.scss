@@ -1,0 +1,28 @@
+* {
+  font-family: "Inter", sans-serif;
+  scroll-behavior: smooth;
+}
+
+code {
+  font-family: "Fira Code", monospace;
+}
+
+::selection {
+  background-color: rgb(220, 242, 255);
+}
+
+.background {
+  display: block;
+  z-index: -1;
+
+  min-width: 100%;
+  min-height: 100%;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
