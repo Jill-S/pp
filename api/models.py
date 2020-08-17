@@ -83,6 +83,30 @@ class Student(User):
         "project"), on_delete=models.SET_NULL, blank=True, null=True)
 
 
+domains = (
+    ("CS", "Cyber Security (Forensics, Blockchain Technology, Biometrics Security, Cryptographic Techniques)"),
+    ("IP", "Image Processing (Computer Vision)"),
+    ("AI", "Artifical Intelligence (Machine Learning, Natural Language Processing, Robotics)"),
+    ("CN", "Computer Networking"),
+    ("BD", "Big Data Processing"),
+    ("EHIA", "Embedded and Hardware Integrated Applications (IOT)"),
+    ("ARVR", "Augmented Reality and Virtual Reality"),
+    ("GIS", "GIS"),
+    ("CLOUD", "Cloud Computing (High Performance Computing)"),
+    ("SP", "System Programming (Compiler construction, OS, Device drivers)"),
+    ("QC", "Quantum Computing"),
+    ("STA", "Software Testing Automation"),
+    ("OTHER", "Other"),
+)
+category = (("IN", "Internal"),
+            ("EX", "External"),
+            ("ID", "Inter-disciplinary"),)
+
+status = (("P", "Pending"),
+          ("A", "Accepted"),
+          ("R", "Rejected"),)
+
+
 thrust_areas = (("NS", "Network and Security"),
                 ("AD", "Application Development"),
                 ("IM", "Information Management"),
@@ -91,11 +115,17 @@ thrust_areas = (("NS", "Network and Security"),
 
 class Guide(User):
     initials = models.CharField(_("initials"), max_length=50, unique=True)
-    area_of_interest = JSONField()
-    # check before saving
+    preferences = models.ManyToManyField(
+        "api.Preference", verbose_name=_("preferences"))
     branch = models.CharField(
         _("branch"), max_length=40, choices=branches, default="IT")
-    thrust_area = JSONField()
+
+
+class Preference(models.Model):
+    area_of_interest = models.CharField(
+        _("area of interest"), choices=domains, max_length=256)
+    thrust_area = models.CharField(
+        _("thrust area"), choices=thrust_areas, max_length=2)
 
 
 class Assistant(User):
@@ -125,30 +155,6 @@ class Assignment(models.Model):
     description = models.TextField(_("description"), blank=True, null=True)
     weightage = models.IntegerField(_("weightage"), blank=True, default=0)
     title = models.CharField(_("title"), max_length=256)
-
-
-domains = (
-    ("CS", "Cyber Security (Forensics, Blockchain Technology, Biometrics Security, Cryptographic Techniques)"),
-    ("IP", "Image Processing (Computer Vision)"),
-    ("AI", "Artifical Intelligence (Machine Learning, Natural Language Processing, Robotics)"),
-    ("CN", "Computer Networking"),
-    ("BD", "Big Data Processing"),
-    ("EHIA", "Embedded and Hardware Integrated Applications (IOT)"),
-    ("ARVR", "Augmented Reality and Virtual Reality"),
-    ("GIS", "GIS"),
-    ("CLOUD", "Cloud Computing (High Performance Computing)"),
-    ("SP", "System Programming (Compiler construction, OS, Device drivers)"),
-    ("QC", "Quantum Computing"),
-    ("STA", "Software Testing Automation"),
-    ("OTHER", "Other"),
-)
-category = (("IN", "Internal"),
-            ("EX", "External"),
-            ("ID", "Inter-disciplinary"),)
-
-status = (("P", "Pending"),
-          ("A", "Accepted"),
-          ("R", "Rejected"),)
 
 
 class Project(models.Model):

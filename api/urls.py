@@ -24,6 +24,7 @@ urlpatterns = [
     path('<int:groupId>/rgAssignmentList/', views.rgAssignmentList),
     path('<int:groupId>/rgAssignmentDetails/<int:pk>/', views.rgAssignmentDetails),
     path("rgAssignGrades/", views.rgAssignGrades),
+    path("rgDetailsForm/", views.rgDetailsForm),
 
     # authentication routes
     path('signIn/', views.signIn),

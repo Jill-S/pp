@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 
 from .models import (GroupRequest, ProjectRequest, Assignment, Assistant, Comment, Coordinator,
-                     File, Grade, Guide, Project, Student, Team)
+                     File, Grade, Guide, Project, Student, Team, Preference)
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -96,6 +96,12 @@ class GuideSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
+        fields = '__all__'
+
+
+class PreferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Preference
         fields = '__all__'
 
 

@@ -581,8 +581,8 @@ def rgAssignGrades(request):
             assignment=request.data.get("assignment_id"))[0]
         if (_g.assignment.weightage >= i.get("marks_obtained")) and (i.get("marks_obtained") >= 0):
             _g.marks_obtained = i.get("marks_obtained")
-            # _g.save()
-            print(_g.marks_obtained)
+            _g.save()
+            # print(_g.marks_obtained)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     return Response()
@@ -612,6 +612,18 @@ def rgAssignmentList(request, groupId, *args, **kwargs):
         response.append(_t)
     return Response(data=response)
 
+
+@api_view(['GET', 'PUT'])
+def rgDetailsForm(request):
+    if request.method == "GET":
+        # do something
+        pass
+    elif request.method == "PUT":
+        guide = Guide.objects.get(id=request.data.id)
+        # guide_data = {
+        #     "initials" : guide.initials,
+        #     "aoi" : guide.aoi,
+        # }
 
 # Student views
 
@@ -696,8 +708,8 @@ def guideSignUp(request):
             password = request.data.get("password")
             first_name = request.data.get("first_name")
             last_name = request.data.get("last_name")
-            area_of_interest = request.data.get("area_of_interest")
-            thrust_area = request.data.get("thrust_area")
+            # area_of_interest = request.data.get("area_of_interest")
+            # thrust_area = request.data.get("thrust_area")
             initials = request.data.get("initials")
             branch = request.data.get("branch")
             if branch == "Information Technology":
@@ -717,8 +729,8 @@ def guideSignUp(request):
                 "email": email,
                 "password": password,
                 "branch": branch,
-                "area_of_interest": area_of_interest,
-                "thrust_area": thrust_area,
+                # "area_of_interest": area_of_interest,
+                # "thrust_area": thrust_area,
                 "initials": initials,
                 "profile_photo": None,
                 "is_staff": False,
