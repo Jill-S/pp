@@ -661,9 +661,8 @@ def rgDetailsForm(request):
 
         return Response(data=response)
     elif request.method == "PUT":
-        guide = Guide.objects.all()[0]
-        # # print(request.user)
-        # guide = Guide.objects.get(id=request.user.id)
+        # guide = Guide.objects.all()[0]
+        guide = Guide.objects.get(id=request.user.id)
         data = request.data
         if len(data["preferences"]) > 4:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -688,12 +687,55 @@ def rgDetailsForm(request):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view()
+@permission_classes([permissions.AllowAny])
+def rgProfile(request):
+    guide = Guide.objects.all()[0]
+    # request.user
+    response = {
+        "personal": {
+            "name": " ".join([guide.first_name.strip(), str(guide.last_name or "").strip()]),
+            "initials": guide.initials,
+            "email": guide.email
+        }
+    }
+    group_details = []
+    teams = Team.objects.filter(guide=guide)
+    for team in teams:
+        leader = Student.objects.get(id=team.leader.id)
+        _t = {
+            "team id": team.id,
+            "leader": " ".join(
+                [leader.first_name.strip(), str(leader.last_name or "").strip()])
+        }
+        students = Student.objects.filter(team=team)
+        member_list = []
+        for student in students:
+            _s = {
+                "student name": " ".join([student.first_name.strip(), str(student.last_name or "").strip()]),
+                "student email": student.email,
+                "student roll number": student.roll_number,
+                "student branch": student.branch
+            }
+            member_list.append(_s)
+        _t.setdefault("member list", member_list)
+
+        group_details.append(_t)
+
+    response.setdefault("group_details", group_details)
+
+    return Response(data=response)
+
 # Student views
 
 # misc
 
 
-@api_view()
+""" change profile picture and password """
+
+
+@ api_view()
 def whoAmI(request):
     try:
         userType = request.user.groups.all()[0].name.lower()
@@ -702,14 +744,14 @@ def whoAmI(request):
         return Response({"type": "unknown"}, status=status.HTTP_200_OK)
 
 
-@api_view()
+@ api_view()
 def signOut(request):
     logout(request)
     return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@ api_view(['POST'])
+@ permission_classes([permissions.AllowAny])
 def signIn(request):
     if request.method == 'POST':
         email = request.data.get("email")
@@ -724,8 +766,8 @@ def signIn(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@ api_view(['POST'])
+@ permission_classes([permissions.AllowAny])
 def signUp(request):
     if request.method == 'POST':
         email = request.data.get("email")
@@ -762,8 +804,8 @@ def signUp(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@ api_view(['POST'])
+@ permission_classes([permissions.AllowAny])
 def guideSignUp(request):
     if request.method == 'POST':
         if request.user.has_perm('api.add_guide'):
