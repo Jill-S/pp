@@ -1,20 +1,46 @@
-from rest_framework.decorators import permission_classes
-from rest_framework import permissions
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import HttpResponse, render
 from django.utils import timezone
 from rest_framework import permissions, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import (Assignment, Assistant, Comment, Coordinator,
-                     File, Grade, Guide, Project, Student, Team, GroupRequest, ProjectRequest)
-from .serializers import (AssignmentSerializer,
-                          AssistantSerializer, CommentSerializer,
-                          CoordinatorSerializer, FileSerializer,
-                          GradeSerializer, GuideSerializer, ProjectSerializer,
-                          StudentSerializer, TeamSerializer, GroupRequestSerializer, ProjectRequestSerializer)
-import json
+
+from .models import (Assignment, Assistant, Comment, Coordinator, File, Grade,
+                     GroupRequest, Guide, Preference, Project, ProjectRequest,
+                     Student, Team)
+from .serializers import (AssignmentSerializer, AssistantSerializer,
+                          CommentSerializer, CoordinatorSerializer,
+                          FileSerializer, GradeSerializer,
+                          GroupRequestSerializer, GuideSerializer,
+                          PreferenceSerializer, ProjectRequestSerializer,
+                          ProjectSerializer, StudentSerializer, TeamSerializer)
+
+domains = (
+    ("CS", "Cyber Security (Forensics, Blockchain Technology, Biometrics Security, Cryptographic Techniques)"),
+    ("IP", "Image Processing (Computer Vision)"),
+    ("AI", "Artifical Intelligence (Machine Learning, Natural Language Processing, Robotics)"),
+    ("CN", "Computer Networking"),
+    ("BD", "Big Data Processing"),
+    ("EHIA", "Embedded and Hardware Integrated Applications (IOT)"),
+    ("ARVR", "Augmented Reality and Virtual Reality"),
+    ("GIS", "GIS"),
+    ("CLOUD", "Cloud Computing (High Performance Computing)"),
+    ("SP", "System Programming (Compiler construction, OS, Device drivers)"),
+    ("QC", "Quantum Computing"),
+    ("STA", "Software Testing Automation"),
+    ("OTHER", "Other"),
+)
+category = (("IN", "Internal"),
+            ("EX", "External"),
+            ("ID", "Inter-disciplinary"),)
+
+thrust_areas = (("NS", "Network and Security"),
+                ("AD", "Application Development"),
+                ("IM", "Information Management"),
+                ("KS", "Knowledge-based systems"),)
 
 # admin views
 
@@ -614,16 +640,63 @@ def rgAssignmentList(request, groupId, *args, **kwargs):
 
 
 @api_view(['GET', 'PUT'])
+@permission_classes([permissions.AllowAny])
 def rgDetailsForm(request):
     if request.method == "GET":
-        # do something
-        pass
+        guide = Guide.objects.all()[0]
+        # print(request.user)
+        # guide = Guide.objects.get(id=request.user.id)
+        response = {
+            "guide initials": guide.initials,
+        }
+        preferences = guide.preferences.all()
+        _preferences = []
+        for preference in preferences:
+            _t = {
+                "area of interest": preference.area_of_interest,
+                "thrust area": preference.thrust_area
+            }
+            _preferences.append(_t)
+        response.setdefault("preferences", _preferences)
+
+        return Response(data=response)
     elif request.method == "PUT":
-        guide = Guide.objects.get(id=request.data.id)
-        # guide_data = {
-        #     "initials" : guide.initials,
-        #     "aoi" : guide.aoi,
-        # }
+        guide = Guide.objects.all()[0]
+        # print(request.user)
+        # guide = Guide.objects.get(id=request.user.id)
+        data = request.data
+        guide.initials = data["guide initials"]
+        guide.save()
+        for preference in data["preferences"]:
+            # check if already selected and is existing in DB
+            try:
+                _p = Preference.objects.filter(
+                    area_of_interest=preference["area of interest"]).filter(thrust_area=preference["thrust area"]).first()
+                if _p in guide.preferences.all():
+                    continue
+                else:
+                    if len(guide.preferences.all()) > 4:
+                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        print(len(guide.preferences.all()))
+                        guide.preferences.add(_p)
+                        guide.save()
+            except:
+                try:
+                    assert preference["area of interest"] in [i[0]
+                                                              for i in domains]
+                    _p = Preference.objects.create(
+                        area_of_interest=preference["area of interest"], thrust_area=preference["thrust area"])
+                    if len(guide.preferences.all()) > 4:
+                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        print(len(guide.preferences.all()))
+                        guide.preferences.add(_p)
+                        guide.save()
+                except:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Student views
 

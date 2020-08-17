@@ -116,7 +116,7 @@ thrust_areas = (("NS", "Network and Security"),
 class Guide(User):
     initials = models.CharField(_("initials"), max_length=50, unique=True)
     preferences = models.ManyToManyField(
-        "api.Preference", verbose_name=_("preferences"))
+        "api.Preference", verbose_name=_("preferences"), blank=True, null=True)
     branch = models.CharField(
         _("branch"), max_length=40, choices=branches, default="IT")
 
