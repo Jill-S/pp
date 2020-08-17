@@ -23,8 +23,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['id', 'email', 'first_name', 'last_name',
-                  "profile_photo", "branch", "roll_number", "team"]
+        fields = "__all__"
 
 
 class CoordinatorSerializer(serializers.ModelSerializer):
@@ -45,7 +44,6 @@ class CoordinatorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Coordinator
-        # fields = ['id', 'email', 'first_name', 'last_name',  "profile_photo"]
         fields = "__all__"
 
 
@@ -67,7 +65,7 @@ class AssistantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assistant
-        fields = ['id', 'email', 'first_name', 'last_name', "profile_photo"]
+        fields = "__all__"
 
 
 class GuideSerializer(serializers.ModelSerializer):
@@ -89,8 +87,6 @@ class GuideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guide
         fields = "__all__"
-        # fields = ['id', 'email', 'first_name', 'last_name',
-        #           "profile_photo", "area_of_interest", "thrust_area", "initials"]
 
 
 class TeamSerializer(serializers.ModelSerializer):

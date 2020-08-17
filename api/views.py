@@ -800,11 +800,11 @@ def signUp(request):
         elif branch == "Electronics and Telecommunication":
             branch = "EXTC"
         data = {
-            "first_name": f"{first_name}",
-            "last_name": f"{last_name}",
-            "email": f"{email}",
-            "password": f"{password}",
-            "branch": f"{branch}",
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password": password,
+            "branch": branch,
             "roll_number": roll_number,
             "profile_photo": None,
             "is_staff": False,
