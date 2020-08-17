@@ -662,39 +662,29 @@ def rgDetailsForm(request):
         return Response(data=response)
     elif request.method == "PUT":
         guide = Guide.objects.all()[0]
-        # print(request.user)
+        # # print(request.user)
         # guide = Guide.objects.get(id=request.user.id)
         data = request.data
-        guide.initials = data["guide initials"]
-        guide.save()
+        if len(data["preferences"]) > 4:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         for preference in data["preferences"]:
-            # check if already selected and is existing in DB
-            try:
-                _p = Preference.objects.filter(
-                    area_of_interest=preference["area of interest"]).filter(thrust_area=preference["thrust area"]).first()
-                if _p in guide.preferences.all():
-                    continue
-                else:
-                    if len(guide.preferences.all()) > 4:
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
-                    else:
-                        print(len(guide.preferences.all()))
-                        guide.preferences.add(_p)
-                        guide.save()
-            except:
-                try:
-                    assert preference["area of interest"] in [i[0]
-                                                              for i in domains]
-                    _p = Preference.objects.create(
-                        area_of_interest=preference["area of interest"], thrust_area=preference["thrust area"])
-                    if len(guide.preferences.all()) > 4:
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
-                    else:
-                        print(len(guide.preferences.all()))
-                        guide.preferences.add(_p)
-                        guide.save()
-                except:
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+            if not preference["area of interest"] in [i[0] for i in domains]:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            if not preference["thrust area"] in [i[0] for i in thrust_areas]:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        guide.initials = data["guide initials"]
+        guide.preferences.clear()
+        guide.save()
+
+        for preference in data["preferences"]:
+            _p = Preference.objects.filter(area_of_interest=preference["area of interest"]).filter(
+                thrust_area=preference["thrust area"]).first()
+            if _p == None:
+                _p = Preference.objects.create(
+                    area_of_interest=preference["area of interest"], thrust_area=preference["thrust area"])
+            guide.preferences.add(_p)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
