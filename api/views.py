@@ -719,8 +719,20 @@ def rgProfile(request):
                 "student branch": student.branch
             }
             member_list.append(_s)
-        _t.setdefault("member list", member_list)
 
+        project = Project.objects.filter(team=team).first()
+        if project != None:
+            project_details = {
+                "project title": project.title,
+                "project description": project.description,
+                "project domain": project.domain,
+                "project category": project.category,
+                "project explanatory field": project.explanatory_field,
+            }
+        else:
+            project_details = {}
+        _t.setdefault("member list", member_list)
+        _t.setdefault("project", project_details)
         group_details.append(_t)
 
     response.setdefault("group_details", group_details)
