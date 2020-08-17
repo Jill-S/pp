@@ -1,0 +1,25 @@
+.assignment-details a:hover {
+  text-decoration: none;
+}
+
+.assignment-details .form-section {
+  width: 75%;
+}
+
+.assignment-details .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .assignment-details .form-section {
+    width: 100%;
+  }
+  .assignment-details .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=AssignmentCreation.css.map */

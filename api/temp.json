@@ -35,5 +35,11 @@
     "password": "adminadmin",
     "initials": "NN",
     "area_of_interest": "Networking",
-    "thrust_area": "NS"
+    "thrust_area": "NS",
+    "branch": "IT"
 }
+
+
+email="nishavak.guide@somaiya.edu" first_name="nishavak" password="adminadmin" initials="NN" area_of_interest="Networking" thrust_area="NS" 
+
+python -m httpie post http://localhost:8000/api/guideSignUp/ email="nishavak.guide@somaiya.edu" first_name="nishavak" password="adminadmin" branch="IT" last_name="naik" area_of_interest="AI" thrust_area="NS" initials="NN"

@@ -1,0 +1,16 @@
+#GuideAssignmentList .nav-pills .nav-link:not(.active) {
+  background-color: white;
+  color: #b7202e;
+}
+
+#GuideAssignmentList .nav-pills .nav-link {
+  background-color: #b7202e;
+  color: white;
+}
+
+#GuideAssignmentList .bg {
+  background-image: url("/assets/images/EvilNextDevilfish-small.gif");
+  -webkit-filter: blur(0.6em);
+          filter: blur(0.6em);
+}
+/*# sourceMappingURL=GuideAssignmentList.css.map */

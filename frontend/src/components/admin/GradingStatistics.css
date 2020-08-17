@@ -1,0 +1,22 @@
+.grading-stats a:hover {
+  text-decoration: none;
+}
+
+.grading-stats tr:hover {
+  cursor: auto;
+}
+
+.grading-stats .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .grading-stats .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=GradingStatistics.css.map */

@@ -1,0 +1,28 @@
+.project a:hover {
+  text-decoration: none;
+}
+
+.project table tbody tr {
+  color: #63605f;
+}
+
+.project table tbody tr:hover {
+  color: #b7202e;
+  background: rgba(231, 231, 231, 0.459);
+  cursor: pointer;
+}
+
+.project .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .project .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=ProjectList.css.map */

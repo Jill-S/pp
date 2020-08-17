@@ -94,7 +94,7 @@ class Guide(User):
     area_of_interest = JSONField()
     # check before saving
     branch = models.CharField(
-        _("branch"), max_length=4, choices=branches, default="IT")
+        _("branch"), max_length=40, choices=branches, default="IT")
     thrust_area = JSONField()
 
 
@@ -108,6 +108,8 @@ class Coordinator(User):
 
 class File(models.Model):
     submitted_by = models.EmailField(_("submitted by"), max_length=254)
+    team = models.ForeignKey("api.Team", verbose_name=_(
+        "team"), on_delete=models.SET_NULL, blank=True, null=True)
     assignment = models.ForeignKey("api.Assignment", verbose_name=_(
         "assignment"), on_delete=models.CASCADE)
     file = models.FileField(_("file"), upload_to="user_files/")
@@ -215,14 +217,14 @@ class GroupRequest(models.Model):
 class Team(models.Model):
     leader = models.OneToOneField("api.Student", verbose_name=_(
         "leader"), null=True, on_delete=models.SET_NULL,  related_name='+')
-    guide = models.OneToOneField("api.Guide", verbose_name=_(
+    guide = models.ForeignKey("api.Guide", verbose_name=_(
         "guide"), on_delete=models.SET_NULL, blank=True, null=True)
 
 
 class Grade(models.Model):
     students = models.ForeignKey("api.Student", verbose_name=_(
         "students"), on_delete=models.DO_NOTHING)
-    assignment = models.OneToOneField(
+    assignment = models.ForeignKey(
         "api.Assignment", verbose_name=_("assignment"), on_delete=models.CASCADE)
     # turned in
     turned_in = models.BooleanField(_("turned in"), default=False)

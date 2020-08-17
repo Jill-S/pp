@@ -1,0 +1,28 @@
+.groups a:hover {
+  text-decoration: none;
+}
+
+.groups table tbody tr {
+  color: #63605f;
+}
+
+.groups table tbody tr:hover {
+  color: #b7202e;
+  background: rgba(231, 231, 231, 0.459);
+  cursor: pointer;
+}
+
+.groups .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .groups .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=GroupList.css.map */

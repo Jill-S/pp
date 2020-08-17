@@ -1,0 +1,36 @@
+#guide-header .dropdown-menu {
+  margin-top: 0.2em;
+}
+
+#guide-header .dropdown-menu .dropdown-item {
+  cursor: pointer;
+}
+
+#guide-header .dropdown .dropdown-menu {
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+}
+
+#guide-header .dropdown.show .dropdown-menu {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media only screen and (max-width: 992px) {
+  #guide-header .dropdown-item:hover {
+    background: none;
+  }
+}
+
+#guide-header .dropdown-item:active {
+  color: white;
+  background: #b7202e;
+}
+
+#guide-header a {
+  text-decoration: none;
+}
+/*# sourceMappingURL=GuideHeader.css.map */

@@ -1,0 +1,26 @@
+#guide-assignment-details .file-container:hover {
+  background-color: #faf6f6;
+}
+
+#guide-assignment-details a:hover {
+  text-decoration: none;
+}
+
+#guide-assignment-details .btn {
+  outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+#guide-assignment-details .btn:hover {
+  background-color: #b7202e;
+  color: white;
+}
+
+#guide-assignment-details #grade {
+  border: none;
+  outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+/*# sourceMappingURL=GuideAssignmentDetails.css.map */

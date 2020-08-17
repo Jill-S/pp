@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAGM,iBAHW,CACf,gBAAgB,CACd,KAAK,AACF,MAAM,CAAC;EACN,gBAAgB,EAAE,IAAI;EACtB,aAAa,EAAE,kBAAkB;EACjC,OAAO,EAAE,IAAI;CACd;;AAGL,MAAM,MAAM,MAAM,MAAM,SAAS,EAAE,KAAK;EAV1C,AAWI,iBAXa,CAWb,gBAAgB,CAAC;IACf,UAAU,EAAE,MAAM;GACnB",
+    "sources": [
+        "PersonalSection.scss"
+    ],
+    "names": [],
+    "file": "PersonalSection.css"
+}

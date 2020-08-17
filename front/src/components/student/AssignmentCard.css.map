@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,eAAe,CAAC;EACd,UAAU,EAAE,eAAe;CAQ5B;;AATD,AAEE,eAFa,AAEZ,MAAM,CAAC;EACN,SAAS,EAAE,WAAW;CAKvB;;AARH,AAII,eAJW,AAEZ,MAAM,CAEL,YAAY,CAAC;EACX,UAAU,EAAE,SAAS;EACrB,gBAAgB,EAAE,OAAkB;CACrC",
+    "sources": [
+        "AssignmentCard.scss"
+    ],
+    "names": [],
+    "file": "AssignmentCard.css"
+}

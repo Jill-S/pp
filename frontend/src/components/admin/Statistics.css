@@ -1,0 +1,22 @@
+.statistics a:hover {
+  text-decoration: none;
+}
+
+.statistics tr:hover {
+  cursor: auto;
+}
+
+.statistics .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .statistics .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=Statistics.css.map */

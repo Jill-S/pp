@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACE,kBADgB,CAChB,GAAG,CAAC;EACF,gBAAgB,EAAE,gCAAgC;EAClD,MAAM,EAAE,SAAS;CAElB",
+    "sources": [
+        "Assignment.scss"
+    ],
+    "names": [],
+    "file": "Assignment.css"
+}

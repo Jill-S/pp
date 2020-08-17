@@ -63,14 +63,14 @@ export default class App extends Component {
         return (
           <div>
             <GuideRoutes />
-            <button
+            {/* <button
               className="btn btn-link"
               onClick={() =>
                 axios.get("signOut/").then(() => window.location.reload())
               }
             >
               Guide
-            </button>
+            </button> */}
           </div>
         );
       default:

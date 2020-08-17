@@ -1,0 +1,22 @@
+#Sidebar .profile-pic {
+  max-width: 100%;
+  height: auto;
+}
+
+#Sidebar .link {
+  text-decoration: none;
+  color: #575859;
+}
+
+#Sidebar a div:hover {
+  color: black;
+  cursor: pointer;
+  -webkit-transition: 200ms ease;
+  transition: 200ms ease;
+}
+
+#Sidebar .current-tab {
+  color: #555;
+  background-color: #fff;
+}
+/*# sourceMappingURL=Sidebar.css.map */

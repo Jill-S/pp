@@ -1,0 +1,26 @@
+#SubmissionStatus .nav-pills .nav-link:not(.active) {
+  background-color: white;
+  color: #b7202e;
+}
+
+#SubmissionStatus .nav-pills .nav-link {
+  background-color: #b7202e;
+  color: white;
+}
+
+#SubmissionStatus .bg {
+  background-image: url("/assets/images/EvilNextDevilfish-small.gif");
+  -webkit-filter: blur(0.6em);
+          filter: blur(0.6em);
+}
+
+table tbody tr {
+  color: #63605f;
+}
+
+table tbody tr:hover {
+  color: #b7202e;
+  background: rgba(231, 231, 231, 0.459);
+  cursor: pointer;
+}
+/*# sourceMappingURL=SubmissionStatus.css.map */

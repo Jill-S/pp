@@ -1,0 +1,18 @@
+.assignmentCard {
+  -webkit-transition: -webkit-transform 300ms;
+  transition: -webkit-transform 300ms;
+  transition: transform 300ms;
+  transition: transform 300ms, -webkit-transform 300ms;
+}
+
+.assignmentCard:hover {
+  -webkit-transform: scale(1.04);
+          transform: scale(1.04);
+}
+
+.assignmentCard:hover .card-header {
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+  background-color: #ebebeb;
+}
+/*# sourceMappingURL=AssignmentCard.css.map */

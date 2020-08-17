@@ -1,0 +1,33 @@
+.project-details a:hover {
+  text-decoration: none;
+}
+
+.project-details a:hover span {
+  color: #b7202e;
+}
+
+.project-details .badge-info {
+  background-color: #b7202e;
+}
+
+.project-details .left-panel {
+  border-right: 1px solid #dedcd9;
+}
+
+.project-details .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .project-details .left-panel {
+    border: none;
+  }
+  .project-details .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=ProjectDetails.css.map */

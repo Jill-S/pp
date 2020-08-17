@@ -1,0 +1,6 @@
+#group-card:hover #card-header {
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+  background-color: #ebebeb;
+}
+/*# sourceMappingURL=GuideGroupCard.css.map */

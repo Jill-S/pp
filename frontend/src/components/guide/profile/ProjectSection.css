@@ -1,0 +1,5 @@
+#project-section .form-control:focus {
+  -webkit-transition: 0.15s all;
+  transition: 0.15s all;
+}
+/*# sourceMappingURL=ProjectSection.css.map */

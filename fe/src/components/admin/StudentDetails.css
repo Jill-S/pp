@@ -1,0 +1,50 @@
+/*.heading{
+  text-align: center;
+  color: rgb(183, 32, 46);
+  font-size: 2rem;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px;
+  font-weight: bold;
+}
+.guide-details{
+  padding: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.personal{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}*/
+.student-details a:hover {
+  text-decoration: none;
+}
+
+.student-details a:hover span {
+  color: #b7202e;
+}
+
+.student-details .badge-info {
+  background-color: #b7202e;
+}
+
+.student-details .left-panel {
+  border-right: 1px solid #dedcd9;
+}
+
+.student-details .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .student-details .left-panel {
+    border: none;
+  }
+  .student-details .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=StudentDetails.css.map */

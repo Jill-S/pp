@@ -1,6 +1,4 @@
-
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
@@ -9,7 +7,8 @@ urlpatterns = [
     path('rGroupRequest/', views.rGroupRequest),
     path('rProjectRequest/', views.rProjectRequest),
     path('rGroupRequestManage/<int:id>/<slug:status>/', views.rGroupRequestManage),
-    path('rProjectRequestManage/<int:id>/', views.rProjectRequestManage),
+    path('rProjectRequestManage/<int:id>/<slug:status>/',
+         views.rProjectRequestManage),
     path('rGroup/', views.rGroup),
     path('rCreateAssignment/', views.rCreateAssignment),
     path('rSubmissionStatistics/', views.rSubmissionStatistics),
@@ -20,6 +19,12 @@ urlpatterns = [
     path('rGroupSubmissionDetails/<int:assignmentId>/<int:teamId>/',
          views.rGroupSubmissionDetails),
     path('whoAmI/', views.whoAmI),
+    # guide routes
+    path('rgDashboard/', views.rgDashboard),
+    path('<int:groupId>/rgAssignmentList/', views.rgAssignmentList),
+    path('<int:groupId>/rgAssignmentDetails/<int:pk>/', views.rgAssignmentDetails),
+    path("rgAssignGrades/", views.rgAssignGrades),
+
     # authentication routes
     path('signIn/', views.signIn),
     path('signUp/', views.signUp),

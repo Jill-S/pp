@@ -1,0 +1,10 @@
+#AssignmentList .nav-pills .nav-link:not(.active) {
+  background: transparent;
+  color: #b7202e;
+}
+
+#AssignmentList .nav-pills .nav-link {
+  background-color: #b7202e;
+  color: white;
+}
+/*# sourceMappingURL=AssignmentList.css.map */

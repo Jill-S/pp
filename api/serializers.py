@@ -88,8 +88,9 @@ class GuideSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Guide
-        fields = ['id', 'email', 'first_name', 'last_name',
-                  "profile_photo", "area_of_interest", "thrust_area", "initials"]
+        fields = "__all__"
+        # fields = ['id', 'email', 'first_name', 'last_name',
+        #           "profile_photo", "area_of_interest", "thrust_area", "initials"]
 
 
 class TeamSerializer(serializers.ModelSerializer):

@@ -1,0 +1,28 @@
+.student-list a:hover {
+  text-decoration: none;
+}
+
+.student-list table tbody tr {
+  color: #63605f;
+}
+
+.student-list table tbody tr:hover {
+  color: #b7202e;
+  background: rgba(231, 231, 231, 0.459);
+  cursor: pointer;
+}
+
+.student-list .back-button {
+  width: 30vh;
+  background-color: #b7202e;
+  color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .student-list .back-button {
+    width: 40vh;
+    background-color: #b7202e;
+    color: white;
+  }
+}
+/*# sourceMappingURL=StudentList.css.map */

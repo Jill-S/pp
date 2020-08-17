@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACE,eADa,CACb,UAAU,CAAC,SAAS,AAAA,IAAK,CAAA,OAAO,EAAE;EAChC,UAAU,EAAE,WAAW;EACvB,KAAK,EAAE,OAAgB;CACxB;;AAJH,AAKE,eALa,CAKb,UAAU,CAAC,SAAS,CAAC;EACnB,gBAAgB,EAAE,OAAgB;EAClC,KAAK,EAAE,KAAK;CACb",
+    "sources": [
+        "AssignmentList.scss"
+    ],
+    "names": [],
+    "file": "AssignmentList.css"
+}

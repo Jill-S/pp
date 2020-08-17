@@ -1,0 +1,57 @@
+.dashboard-admin .dropdown-item:active {
+  background-color: #b7202e;
+  color: white;
+}
+
+.dashboard-admin .sidebar {
+  background-color: rgba(231, 231, 231, 0.459);
+  position: fixed;
+  height: 100vh;
+}
+
+.dashboard-admin .mobile-nav-item {
+  width: 100%;
+}
+
+.dashboard-admin .mobile-nav-item:hover {
+  background-color: #b7202e;
+  color: white;
+}
+
+.dashboard-admin .mobile-nav-item:hover a {
+  color: white;
+}
+
+.dashboard-admin .fa-bars {
+  font-size: 2em;
+  color: #b7202e;
+}
+
+.dashboard-admin .fa-bars:hover {
+  cursor: pointer;
+}
+
+.dashboard-admin .nav-item {
+  margin: 0.15em 0;
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 400ms ease;
+  transition: -webkit-transform 400ms ease;
+  transition: transform 400ms ease;
+  transition: transform 400ms ease, -webkit-transform 400ms ease;
+  color: #63605f;
+}
+
+.dashboard-admin .nav-item:hover {
+  color: white;
+  background: #b7202e;
+}
+
+.dashboard-admin .dropdown-item {
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 400ms ease;
+  transition: -webkit-transform 400ms ease;
+  transition: transform 400ms ease;
+  transition: transform 400ms ease, -webkit-transform 400ms ease;
+  color: #63605f;
+}
+/*# sourceMappingURL=Dashboard.css.map */

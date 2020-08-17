@@ -1,0 +1,9 @@
+.assignment-list .create-button {
+  background-color: #b7202e;
+  color: white;
+}
+
+.assignment-list a:hover {
+  text-decoration: none;
+}
+/*# sourceMappingURL=AssignmentList.css.map */

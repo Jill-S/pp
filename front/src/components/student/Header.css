@@ -1,0 +1,36 @@
+#Header .dropdown-menu {
+  margin-top: 0.2em;
+}
+
+#Header .dropdown-menu .dropdown-item {
+  cursor: pointer;
+}
+
+#Header .dropdown .dropdown-menu {
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+}
+
+#Header .dropdown.show .dropdown-menu {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media only screen and (max-width: 992px) {
+  #Header .dropdown-item:hover {
+    background: none;
+  }
+}
+
+#Header .dropdown-item:active {
+  color: white;
+  background: #b7202e;
+}
+
+#Header a {
+  text-decoration: none;
+}
+/*# sourceMappingURL=Header.css.map */
