@@ -714,6 +714,7 @@ def rgProfile(request):
         for student in students:
             _s = {
                 "student name": " ".join([student.first_name.strip(), str(student.last_name or "").strip()]),
+                "student profile photo": student.profile_photo or None,
                 "student email": student.email,
                 "student roll number": student.roll_number,
                 "student branch": student.branch
